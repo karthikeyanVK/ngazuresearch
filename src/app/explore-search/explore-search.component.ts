@@ -1,9 +1,8 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { observable } from 'rxjs'
+import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { AzsearchService } from './azsearch.service';
 import { pluck, map } from 'rxjs/operators';
-import { from } from 'rxjs';
+
 import { MatTableDataSource } from '@angular/material/table';
 
 export interface RealEstate {
@@ -29,13 +28,13 @@ export class ExploreSearchComponent implements OnInit {
   dataSource = new MatTableDataSource<RealEstate>();
   changesrc: RealEstate[] = []
 
-  constructor(private azSearchService: AzsearchService, private changeDetectorRefs: ChangeDetectorRef) { }
+  constructor(private azSearchService: AzsearchService) { }
 
   ngOnInit() {
     console.log("Search works ?");
     this.azSearchService.SuggestSearch().pipe(map(data => this.extractDescription(data.value))).subscribe(data => {
       this.dataSource.data = this.changesrc;
-      this.changeDetectorRefs.detectChanges();
+      
       console.log(data)
     });
   }

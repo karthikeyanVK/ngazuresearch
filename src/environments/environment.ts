@@ -5,10 +5,9 @@
 
 export const environment = {
   production: false,
-  SearchServiceName:'',
-  SearchServiceIndexName:'',
-  ApiVersion:'',
-  SearchQueryKey:''
+  SearchServiceName: 'testazsearchsql',
+  SearchServiceIndexName: 'realestate-us-sample',
+  ApiVersion: '2017-11-11',
+  SearchQueryKey: '7C48850DD5117D8425FB02D989A646EB'
 };
 
- 

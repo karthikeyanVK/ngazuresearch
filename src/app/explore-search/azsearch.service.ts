@@ -5,17 +5,26 @@ import { environment } from '../../environments/environment'
  
 const httpParams = new HttpParams({
   fromObject: {
-
     search: '*',
-    scoringProfile: 'base',
-    scoringParameter: null,
     $count: 'true',
-    $top: '10',
+    $top: '7',
     $skip: '0',
-    $orderby: null,
-    $filter: null
   }
 });
+
+// const httpParams = new HttpParams({
+//   fromObject: {
+
+//     search: '*',
+//     scoringProfile: 'base',
+//     scoringParameter: null,
+//     $count: 'true',
+//     $top: '10',
+//     $skip: '0',
+//     $orderby: null,
+//     $filter: null
+//   }
+// });
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json', 'api-key': environment.SearchQueryKey }),
@@ -30,7 +39,7 @@ const httpOptions = {
 export class AzsearchService {
   private baseSearchServiceUrl = 'https://' + environment.SearchServiceName + '.search.windows.net/indexes/' + environment.SearchServiceIndexName + '/';
   //private documentSearchUrl = this.baseSearchServiceUrl + 'docs/:id?&api-version=' + environment.ApiVersion;
-  private suggestionsSearchUrl = this.baseSearchServiceUrl + 'docs/suggest' + '?&api-version=' + environment.ApiVersion;
+  private suggestionsSearchUrl = this.baseSearchServiceUrl + 'docs/' + '?&api-version=' + environment.ApiVersion;
 
   constructor(private http: HttpClient) { }
   public SuggestSearch(): Observable<any> {

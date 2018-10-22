@@ -6,6 +6,7 @@ import { ExploreSearchComponent } from './explore-search/explore-search.componen
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {ngMaterialLocalModule} from './material-module';
+import { HttpClientModule } from '@angular/common/http'; 
 const appRoutes: Routes = [
   { path: '', component: ExploreSearchComponent },
   { path: 'search', component: ExploreSearchComponent }
@@ -21,6 +22,7 @@ const appRoutes: Routes = [
     FormsModule,    
     ngMaterialLocalModule,
     ReactiveFormsModule,
+    HttpClientModule,
     RouterModule.forRoot(
       appRoutes,
       { enableTracing: true } // <-- debugging purposes only

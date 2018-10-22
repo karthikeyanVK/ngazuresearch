@@ -1,25 +1,30 @@
-import { Component, OnInit } from '@angular/core';
-import {MatAutocompleteModule} from '@angular/material/autocomplete';
-import {FormControl} from '@angular/forms';
+import { Component, OnInit,ChangeDetectorRef  } from '@angular/core';
+import { observable } from 'rxjs'
+import { FormControl } from '@angular/forms';
+import { AzsearchService } from './azsearch.service';
+import { pluck, map } from 'rxjs/operators';
+import { from } from 'rxjs';
+import { MatTableDataSource } from '@angular/material/table';
 
 export interface PeriodicElement {
-  name: string;
-  position: number;
-  weight: number;
-  symbol: string;
+  street: string;
+  source: number;
+  city: number;
+  description: string;
+  status: string
 }
 
 const ELEMENT_DATA: PeriodicElement[] = [
-  {position: 1, name: 'Hydrogen', weight: 1.0079, symbol: 'H'},
-  {position: 2, name: 'Helium', weight: 4.0026, symbol: 'He'},
-  {position: 3, name: 'Lithium', weight: 6.941, symbol: 'Li'},
-  {position: 4, name: 'Beryllium', weight: 9.0122, symbol: 'Be'},
-  {position: 5, name: 'Boron', weight: 10.811, symbol: 'B'},
-  {position: 6, name: 'Carbon', weight: 12.0107, symbol: 'C'},
-  {position: 7, name: 'Nitrogen', weight: 14.0067, symbol: 'N'},
-  {position: 8, name: 'Oxygen', weight: 15.9994, symbol: 'O'},
-  {position: 9, name: 'Fluorine', weight: 18.9984, symbol: 'F'},
-  {position: 10, name: 'Neon', weight: 20.1797, symbol: 'Ne'},
+  { source: 1, street: 'Hydrogen', city: 1.0079, status: 'H', description: '' },
+  { source: 2, street: 'Helium', city: 4.0026, status: 'He', description: '' },
+  { source: 3, street: 'Lithium', city: 6.941, status: 'Li', description: '' },
+  { source: 4, street: 'Beryllium', city: 9.0122, status: 'Be', description: '' },
+  { source: 5, street: 'Boron', city: 10.811, status: 'B', description: 'sdfafda' },
+  { source: 6, street: 'Carbon', city: 12.0107, status: 'C', description: '' },
+  { source: 7, street: 'Nitrogen', city: 14.0067, status: 'N', description: '' },
+  { source: 8, street: 'Oxygen', city: 15.9994, status: 'O', description: '' },
+  { source: 9, street: 'Fluorine', city: 18.9984, status: 'F', description: '' },
+  { source: 10, street: 'Neon', city: 20.1797, status: 'Ne', description: '' },
 ];
 
 @Component({
@@ -28,14 +33,33 @@ const ELEMENT_DATA: PeriodicElement[] = [
   styleUrls: ['./explore-search.component.css']
 })
 export class ExploreSearchComponent implements OnInit {
+
   myControl = new FormControl();
-  options: string[] = ['One', 'Two', 'Three'];
-  displayedColumns: string[] = ['position', 'name', 'weight', 'symbol'];
-  dataSource = ELEMENT_DATA;
-  constructor() { }
+  options: string[] = [];
+  displayedColumns: string[] = ['source', 'street', 'city', 'description', 'status'];
+  dataSource = new MatTableDataSource<PeriodicElement>();
+  changesrc:PeriodicElement[] = []
+
+  constructor(private azSearchService: AzsearchService,private changeDetectorRefs: ChangeDetectorRef) { }
 
   ngOnInit() {
-    console.log("Search works ?")
+    console.log("Search works ?");
+    this.azSearchService.SuggestSearch().pipe(map(data => this.extractDescription(data.value))).subscribe(data => {
+      this.dataSource.data = this.changesrc;
+      this.changeDetectorRefs.detectChanges();
+      console.log(data)
+    });
   }
-
+ 
+  private extractDescription(data: any): any {
+    return data.map(v => {
+      this.options.push(v.description);
+      var data:PeriodicElement =  {
+        source: v.source, street: v.street, city: v.city, status: v.status, description: v.description
+      };
+      
+      this.changesrc.push(data);
+      return v;
+    });
+  }
 }

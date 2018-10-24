@@ -2,15 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { environment } from '../../environments/environment'
- 
-const httpParams = new HttpParams({
-  fromObject: {
-    search: '*',
-    $count: 'true',
-    $top: '7',
-    $skip: '0',
-  }
-});
+
+
 
 // const httpParams = new HttpParams({
 //   fromObject: {
@@ -26,12 +19,12 @@ const httpParams = new HttpParams({
 //   }
 // });
 
-const httpOptions = {
-  headers: new HttpHeaders({ 'Content-Type': 'application/json', 'api-key': environment.SearchQueryKey }),
-  params: httpParams
-};
 
 
+interface HttpOptions  {
+  headers: HttpHeaders;
+  params: HttpParams;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -42,7 +35,39 @@ export class AzsearchService {
   private suggestionsSearchUrl = this.baseSearchServiceUrl + 'docs/' + '?&api-version=' + environment.ApiVersion;
 
   constructor(private http: HttpClient) { }
-  public SuggestSearch(): Observable<any> {
+  public SuggestSearch(searchData:string): Observable<any> {
+
+    let httpParams = new HttpParams({
+      fromObject: {
+        search: searchData,
+        $count: 'true',
+        $top: '7',
+        $skip: '0',
+        suggesterName: 'namesuggester',
+      }
+    });
+
+    var httpOptions:HttpOptions = {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json', 'api-key': environment.SearchQueryKey }),
+      params: httpParams
+    };
+
+    return this.http.get<any>(this.suggestionsSearchUrl, httpOptions)
+  }
+  public GetSearchdata(searchData:string): Observable<any> {
+    let httpParams = new HttpParams({
+      fromObject: {
+        search: searchData,
+        $count: 'true',
+        $top: '7',
+        $skip: '0',
+      }
+    });
+
+    var httpOptions:HttpOptions = {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json', 'api-key': environment.SearchQueryKey }),
+      params: httpParams
+    };
     return this.http.get<any>(this.suggestionsSearchUrl, httpOptions)
   }
 }

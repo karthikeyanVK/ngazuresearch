@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { AzsearchService } from './azsearch.service';
-import { pluck, map } from 'rxjs/operators';
+import { map, debounceTime } from 'rxjs/operators';
 
 import { MatTableDataSource } from '@angular/material/table';
 
@@ -22,24 +22,36 @@ export interface RealEstate {
 })
 export class ExploreSearchComponent implements OnInit {
 
-  myControl = new FormControl();
+  textCtrl = new FormControl();
   options: string[] = [];
   displayedColumns: string[] = ['source', 'street', 'city', 'description', 'status'];
   dataSource = new MatTableDataSource<RealEstate>();
   changesrc: RealEstate[] = []
-
+  searchData: string
   constructor(private azSearchService: AzsearchService) { }
 
   ngOnInit() {
     console.log("Search works ?");
-    this.azSearchService.SuggestSearch().pipe(map(data => this.extractDescription(data.value))).subscribe(data => {
+    this.textCtrl.valueChanges
+      .pipe(
+        debounceTime(200),
+    ).subscribe(data => this.SuggestSearch(data));
+  }
+
+  private SuggestSearch(searchData: any) {
+    this.azSearchService.SuggestSearch(searchData).pipe(map(data => this.extractDescription(data.value))).subscribe(data => {
+      console.log(data);
+    });
+  }
+  private LoadSearchData(searchData:any)
+  {
+    this.azSearchService.SuggestSearch(searchData).pipe(map(data => this.extractGridData(data.value))).subscribe(data => {
       this.dataSource.data = this.changesrc;
-      
-      console.log(data)
+      console.log(data);
     });
   }
 
-  private extractDescription(data: any): any {
+  private extractGridData(data: any): any {
     return data.map(v => {
       this.options.push(v.description);
       var data: RealEstate = {
@@ -48,6 +60,12 @@ export class ExploreSearchComponent implements OnInit {
 
       this.changesrc.push(data);
       return v;
+    });
+  }
+
+  private extractDescription(data: any): any {
+    return data.map(v => {
+      this.options.push(v.street);     
     });
   }
 }
